@@ -2,11 +2,18 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Bolitaforce : MonoBehaviour
+public class Bolitaforceex : MonoBehaviour
 {
     private MyVector position;
     [SerializeField] private MyVector velocity;
     [SerializeField] private MyVector acceleration;
+
+    [Header("Coeficientes")]
+    [SerializeField] private float densidad = 1;
+    [Range(0f, 1f)] [SerializeField] private float dampening = 0.9f;
+    [Range(0f, 1f)] [SerializeField] private float friccionCoefi = 0.9f;
+    [SerializeField] private float fluidCoefi = 1;
+ 
     [Header("Forces")]
     [SerializeField] private MyVector wind;
     [SerializeField] private MyVector gravedad;
@@ -16,9 +23,8 @@ public class Bolitaforce : MonoBehaviour
 
     [Header("Extra")]
     [SerializeField] private float mass = 1;
-    [Range(0f, 1f)] [SerializeField] private float dampening = 0.9f;
-    [Range(0f, 1f)] [SerializeField] private float friccionCoefi = 0.9f;
     [SerializeField] Camera cam;
+
 
     // Start is called before the first frame update
     void Start()
@@ -45,12 +51,13 @@ public class Bolitaforce : MonoBehaviour
         acceleration = new MyVector(0, 0);
         weight = gravedad * mass;
         AplicarFuerza(weight);
-        AplicarFuerza(wind);
+        //AplicarFuerza(wind);
 
-        MyVector friccion = -friccionCoefi * weight.magnitud * velocity.normalized;
-        AplicarFuerza(friccion);
-
-        AplicarFuerza(CalculoF());
+        
+        if (transform.localPosition.y <=0)
+        {
+            FriccionFluidos();
+        }
 
         Move();
 
@@ -80,8 +87,8 @@ public class Bolitaforce : MonoBehaviour
 
     private void AplicarFuerza(MyVector force)
     {
-        netForce += force;
-        acceleration = netForce / mass;
+        //netForce += force;
+        acceleration += force / mass;
     }
 
     private MyVector CalculoF()
@@ -91,5 +98,13 @@ public class Bolitaforce : MonoBehaviour
 
         MyVector d = -friccionCoefi * netForceMag * velocity.normalized;
         return d;
+    }
+    private void FriccionFluidos()
+    {
+        float frontalArea = transform.localScale.x;
+        float v2 = velocity.magnitud;
+        float scalarpart = -0.5f * densidad * v2 * v2 * frontalArea * fluidCoefi;
+        MyVector friccion = scalarpart * velocity.normalized;
+        AplicarFuerza(friccion);
     }
 }
