@@ -2,20 +2,21 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Mirar : MonoBehaviour
+public class Cardumen : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    [SerializeField] private Vector3 acceleration;
+    [SerializeField] private Vector3 speed;
 
     // Update is called once per frame
     void Update()
     {
         Vector3 mousePos = GetWorldMouse();
-        Vector3 direccion = mousePos - transform.position;
-        float angle = Mathf.Atan2(direccion.y, direccion.x) - Mathf.PI/2;
+        acceleration = mousePos - transform.position;
+        speed += acceleration * Time.deltaTime;
+        speed.z = 0;
+        transform.position += speed * Time.deltaTime;
+        float angle = Mathf.Atan2(speed.y, speed.x) - Mathf.PI / 2f;
+        
         RotarZ(angle);
     }
 
@@ -24,7 +25,15 @@ public class Mirar : MonoBehaviour
         transform.rotation = Quaternion.Euler(0.0f, 0.0f, angleR * Mathf.Rad2Deg);
     }
 
-    private Vector4 GetWorldMouse()
+    private void Movimiento(Vector3 queso)
+    {
+        if (queso.magnitude > 1f)
+        {
+            transform.position += speed * Time.deltaTime;
+        }
+    }
+
+    private Vector3 GetWorldMouse()
     {
         Camera camara = Camera.main;
         Vector3 screenPos = new Vector3(Input.mousePosition.x, Input.mousePosition.y, camara.nearClipPlane);
