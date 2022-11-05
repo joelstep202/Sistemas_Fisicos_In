@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class procedural : MonoBehaviour
 {
-    [SerializeField] private GameObject branchPrefab;
-    [SerializeField] private int totalLevels = 3;
+    [SerializeField] private GameObject clonoriginal;
+    [SerializeField] private int nivelesramas = 3;
     [SerializeField] private float initialSize = 4f;
     [SerializeField, Range(0f, 1f)] private float reductionPerLevel = 0.1f;
     Queue<GameObject> myQueue = new Queue<GameObject>();
@@ -17,7 +17,7 @@ public class procedural : MonoBehaviour
     void Start()
     {
 
-        GameObject rootBranch = Instantiate(branchPrefab, transform);
+        GameObject rootBranch = Instantiate(clonoriginal, transform);
         ChangeBranchSize(rootBranch, initialSize);
         myQueue.Enqueue(rootBranch);
         GenerateTree();
@@ -25,7 +25,7 @@ public class procedural : MonoBehaviour
     }
     private void GenerateTree()
     {
-        if (currentLevel >= totalLevels)
+        if (currentLevel >= nivelesramas)
         {
             return;
         }
@@ -58,7 +58,7 @@ public class procedural : MonoBehaviour
     }
     private GameObject CreateBranch(GameObject prevBranch, float relativeAngle)
     {
-        GameObject newBranch = Instantiate(branchPrefab, transform);
+        GameObject newBranch = Instantiate(clonoriginal, transform);
         newBranch.transform.localPosition = prevBranch.transform.localPosition + prevBranch.transform.up * GetBranchLength(prevBranch);
         newBranch.transform.localRotation = prevBranch.transform.localRotation * Quaternion.Euler(0, 0, relativeAngle);
         return newBranch;
